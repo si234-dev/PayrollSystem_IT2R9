@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarrariPayroll - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-coins"></i>
+                <span>FarrariPayroll</span>
+            </div>
+            <nav>
+                <ul id="menuLinks">
+                    <!-- Filled by JS -->
+                </ul>
+                <div class="nav-item" id="logoutBtn" style="margin-top: auto;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h1 id="nameDisplay">Welcome back!</h1>
+                    <p>Here's what's happening with your payroll today</p>
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div id="nameDisplay2">User</div>
+                        <div id="roleBadge">Employee</div>
+                    </div>
+                    <div class="user-avatar" id="avatar">US</div>
+                </div>
+            </div>
+
+            <!-- Admin View -->
+            <div id="adminView" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">248</div>
+                                <div class="stat-label">Total Employees</div>
+                            </div>
+                            <div class="stat-icon blue">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change"><i class="fas fa-arrow-up"></i> 12 new this month</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">$1.2M</div>
+                                <div class="stat-label">Monthly Payroll</div>
+                            </div>
+                            <div class="stat-icon green">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change"><i class="fas fa-arrow-up"></i> 5% increase</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">23</div>
+                                <div class="stat-label">Pending Approvals</div>
+                            </div>
+                            <div class="stat-icon orange">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change"><i class="fas fa-info-circle"></i> Requires attention</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">92%</div>
+                                <div class="stat-label">Attendance Rate</div>
+                            </div>
+                            <div class="stat-icon purple">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change"><i class="fas fa-arrow-up"></i> 3% above target</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Actions</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-play"></i> Run Payroll</button>
+                            <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-user-plus"></i> Add Employee</button>
+                            <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-file-pdf"></i> Export Report</button>
+                            <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-cog"></i> Settings</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">System Status</h3>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+                                <span>Database</span>
+                                <span style="color: var(--success); font-weight: 600;"><i class="fas fa-check-circle"></i> Online</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+                                <span>API Server</span>
+                                <span style="color: var(--success); font-weight: 600;"><i class="fas fa-check-circle"></i> Online</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                                <span>Backup</span>
+                                <span style="color: #7f8c8d; font-weight: 600;">Last: 2 hrs ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee View -->
+            <div id="userView" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">$4,850</div>
+                                <div class="stat-label">Current Month Salary</div>
+                            </div>
+                            <div class="stat-icon blue">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change"><i class="fas fa-info-circle"></i> Payday in 5 days</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">$58.2K</div>
+                                <div class="stat-label">Year-to-Date Earnings</div>
+                            </div>
+                            <div class="stat-icon green">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change"><i class="fas fa-arrow-up"></i> 12% vs last year</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">15</div>
+                                <div class="stat-label">Leave Days Available</div>
+                            </div>
+                            <div class="stat-icon orange">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change"><i class="fas fa-info-circle"></i> 5 days pending</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">42.5</div>
+                                <div class="stat-label">Hours This Week</div>
+                            </div>
+                            <div class="stat-icon purple">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change"><i class="fas fa-arrow-up"></i> 2.5 hrs overtime</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Actions</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-download"></i> Download Payslip</button>
+                            <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-file-pdf"></i> All Payslips</button>
+                            <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-umbrella-beach"></i> Request Leave</button>
+                            <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-user"></i> My Profile</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Upcoming</h3>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="padding: 10px 0; border-bottom: 1px solid var(--border);">
+                                <div style="font-weight: 600; color: var(--dark);">Payday</div>
+                                <div style="font-size: 13px; color: #7f8c8d;">December 20, 2024</div>
+                            </div>
+                            <div style="padding: 10px 0; border-bottom: 1px solid var(--border);">
+                                <div style="font-weight: 600; color: var(--dark);">Year-end Bonus</div>
+                                <div style="font-size: 13px; color: #7f8c8d;">December 25, 2024</div>
+                            </div>
+                            <div style="padding: 10px 0;">
+                                <div style="font-weight: 600; color: var(--dark);">Benefits Renewal</div>
+                                <div style="font-size: 13px; color: #7f8c8d;">January 15, 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
