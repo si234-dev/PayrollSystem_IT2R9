@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - PayrollPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- SIDEBAR (Same as Dashboard) -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-coins"></i>
+                <span>PayrollPro</span>
+            </div>
+            <nav>
+                <ul id="menuLinks">
+                    <li><a href="index.html"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> <span>Payslips</span></a></li>
+                    <li><a href="leaverequest.html"><i class="fas fa-umbrella-beach"></i> <span>Leave Request</span></a></li>
+                    <li><a href="#"><i class="fas fa-clock"></i> <span>Attendace</span></a></li>
+                    <li><a href="myprofile.html" id="profileLink" class="active"><i class="fas fa-user"></i> <span>My Profile</span></a></li>
+                </ul>
+                <div class="nav-item" id="logoutBtn" style="margin-top: auto;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content" id="mainContent">
+            <div class="header">
+                <div>
+                    <h1>My Profile</h1>
+                    <p>View and manage your personal information</p>
+                    
+                </div>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">JD</div>
+                    <div class="profile-info">
+                        <h2 id="profileName">John Doe</h2>
+                        <p id="profileRole" class="role-badge">Employee</p>
+                    </div>
+                </div>
+
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <span class="label">Email</span>
+                            <span class="value" id="profileEmail">john@example.com</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <span class="label">Phone</span>
+                            <span class="value" id="profilePhone">+1 234 567 890</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-venus-mars"></i>
+                        <div>
+                            <span class="label">Gender</span>
+                            <span class="value" id="profileSex">Male</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <span class="label">Address</span>
+                            <span class="value" id="profileAddress">123 Main St, City</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <span class="label">Joined Date</span>
+                            <span class="value" id="profileJoined">Jan 15, 2023</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-id-card"></i>
+                        <div>
+                            <span class="label">Employee ID</span>
+                            <span class="value" id="profileEmpId">EMP-001</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button class="btn btn-secondary"><i class="fas fa-edit"></i> Edit Profile</button>
+                    <button class="btn btn-primary"><i class="fas fa-key"></i> Change Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Highlight Profile Menu
+        document.getElementById('profileLink').classList.add('active');
+
+        // Fetch User Data for Profile
+        window.onload = async () => {
+            const res = await callAPI({ action: 'check_session' });
+            if (res.status === 'success') {
+                const user = res.data;
+                
+                // Avatar
+                const fullName = `${user.fName || ''} ${user.lName || ''}`.trim() || user.username;
+                document.getElementById('profileAvatar').textContent = fullName.substring(0, 2).toUpperCase();
+                
+                // Name & Role
+                document.getElementById('profileName').textContent = fullName;
+                document.getElementById('profileRole').textContent = user.username === 'admin' ? 'Administrator' : 'Employee';
+                
+                // Details
+                document.getElementById('profileEmail').textContent = user.email || 'N/A';
+                document.getElementById('profilePhone').textContent = user.contactnumber || 'N/A';
+                document.getElementById('profileSex').textContent = user.sex || 'N/A';
+                document.getElementById('profileAddress').textContent = user.address || 'N/A';
+                
+                // Format Joined Date (Assuming you have a created_at field, if not using ID as placeholder)
+                // If your DB has a 'created_at' column, use user.created_at
+                document.getElementById('profileEmpId').textContent = user.username.toUpperCase() + '-' + Math.floor(Math.random() * 1000);
+            }
+        };
+    </script>
+</body>
+</html>

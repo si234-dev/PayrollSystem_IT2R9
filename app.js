@@ -111,6 +111,8 @@ if (document.getElementById('mainContent')) {
                 <li><a href="#"><i class="fas fa-users"></i> Employees</a></li>
                 <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Payroll</a></li>
                 <li><a href="#"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                <li><a href="leaverequest.html"><i class="fas fa-umbrella-beach"></i> <span>Leave Request</span></a></li>
+
                 <li><a href="#"><i class="fas fa-file-alt"></i> Reports</a></li>
             `;
         } else {
@@ -118,9 +120,10 @@ if (document.getElementById('mainContent')) {
             menu.innerHTML = `
                 <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="#"><i class="fas fa-file-pdf"></i> Payslips</a></li>
-                <li><a href="#"><i class="fas fa-umbrella-beach"></i> Leave Request</a></li>
+                <li><a href="leaverequest.html"><i class="fas fa-umbrella-beach"></i> <span>Leave Request</span></a></li>
                 <li><a href="#"><i class="fas fa-clock"></i> Attendance</a></li>
-                <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="myprofile.html"><i class="fas fa-user"></i> <span>My Profile</span></a></li>
+                
             `;
         }
     };

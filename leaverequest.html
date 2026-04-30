@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Request - PayrollPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-coins"></i>
+                <span>PayrollPro</span>
+            </div>
+            <nav>
+                <ul id="menuLinks">
+                    <!-- Filled by JS -->
+                </ul>
+               <div class="nav-item" id="logoutBtn" style="margin-top: auto;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content" id="mainContent">
+            <div class="header">
+                <div>
+                    <h1><i class="fas fa-umbrella-beach"></i> Leave Request</h1>
+                    <p>Submit and manage your leave requests</p>
+                </div>
+            </div>
+
+            <!-- Admin View - Pending Requests -->
+            <div id="adminView" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Pending Leave Requests</h3>
+                        <button class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    <div id="adminRequestsList" class="leave-requests-list">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee View -->
+            <div id="employeeView" style="display: none;">
+                <!-- Submit Leave Request Form -->
+                <div class="leave-form-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Submit Leave Request</h3>
+                        </div>
+
+                        <form id="leaveForm" class="leave-form">
+                            <div id="formAlert" class="alert" style="display: none;"></div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="leaveType"><i class="fas fa-list"></i> Leave Type</label>
+                                    <select id="leaveType" required>
+                                        <option value="">Select leave type</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="startDate"><i class="fas fa-calendar"></i> Start Date</label>
+                                    <input type="date" id="startDate" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="endDate"><i class="fas fa-calendar"></i> End Date</label>
+                                    <input type="date" id="endDate" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="days"><i class="fas fa-calculator"></i> Total Days</label>
+                                    <input type="number" id="days" readonly placeholder="Auto-calculated">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reason"><i class="fas fa-pen"></i> Reason</label>
+                                <textarea id="reason" required placeholder="Explain why you need leave..." rows="4"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attachment"><i class="fas fa-paperclip"></i> Attachment (Optional)</label>
+                                <input type="file" id="attachment" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                <small>Max 5MB. Accepted: PDF, DOC, JPG, PNG</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-paper-plane"></i> Submit Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- My Leave Requests -->
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-header">
+                        <h3 class="card-title">My Leave Requests</h3>
+                    </div>
+                    <div id="myRequestsList" class="leave-requests-list">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize
+        window.onload = async () => {
+            const res = await callAPI({ action: 'check_session' });
+            
+            if (res.status !== 'success') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = res.data;
+            const isAdmin = user.username === 'admin';
+
+            // Setup Menu
+            const menu = document.getElementById('menuLinks');
+            if (isAdmin) {
+                menu.innerHTML = `
+                    <li><a href="index.html"><i class="fas fa-chart-line"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#"><i class="fas fa-users"></i> <span>Employees</span></a></li>
+                    <li><a href="leaverequest.html" class="active"><i class="fas fa-umbrella-beach"></i> <span>Leave Requests</span></a></li>
+                    <li><a href="#"><i class="fas fa-file-alt"></i> <span>Reports</span></a></li>
+                `;
+            } else {
+                menu.innerHTML = `
+                    <li><a href="index.html"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#"><i class="fas fa-file-pdf"></i> Payslips</a></li>
+                    <li><a href="leaverequest.html" class="active"><i class="fas fa-umbrella-beach"></i> <span>Leave Request</span></a></li>
+                    <li><a href="#"><i class="fas fa-clock"></i> Attendance</a></li>
+                    <li><a href="myprofile.html"><i class="fas fa-user"></i> <span>My Profile</span></a></li>
+                `;
+            }
+
+            if (isAdmin) {
+                document.getElementById('adminView').style.display = 'block';
+                loadAdminRequests();
+            } else {
+                document.getElementById('employeeView').style.display = 'block';
+                loadLeaveTypes();
+                loadMyRequests();
+            }
+        };
+
+        // Load Leave Types
+        async function loadLeaveTypes() {
+            const res = await callAPI({ action: 'get_leave_types' });
+            if (res.status === 'success') {
+                const select = document.getElementById('leaveType');
+                res.data.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.id;
+                    option.textContent = `${type.name} (${type.max_days || 'Unlimited'} days)`;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        // Calculate Days
+        document.getElementById('startDate').addEventListener('change', calculateDays);
+        document.getElementById('endDate').addEventListener('change', calculateDays);
+
+        function calculateDays() {
+            const start = new Date(document.getElementById('startDate').value);
+            const end = new Date(document.getElementById('endDate').value);
+            
+            if (start && end && end >= start) {
+                const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                document.getElementById('days').value = days;
+            }
+        }
+
+        // Submit Leave Request
+        document.getElementById('leaveForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('action', 'submit_leave_request');
+            formData.append('leave_type_id', document.getElementById('leaveType').value);
+            formData.append('start_date', document.getElementById('startDate').value);
+            formData.append('end_date', document.getElementById('endDate').value);
+            formData.append('reason', document.getElementById('reason').value);
+
+            if (document.getElementById('attachment').files.length > 0) {
+                formData.append('attachment', document.getElementById('attachment').files[0]);
+            }
+
+            const res = await callAPI(Object.fromEntries(formData));
+
+            const alertBox = document.getElementById('formAlert');
+            if (res.status === 'success') {
+                alertBox.innerHTML = '<i class="fas fa-check-circle"></i> ' + res.message;
+                alertBox.className = 'alert show alert-success';
+                document.getElementById('leaveForm').reset();
+                document.getElementById('days').value = '';
+                setTimeout(loadMyRequests, 1500);
+            } else {
+                alertBox.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (res.message || 'Error');
+                alertBox.className = 'alert show alert-error';
+            }
+            alertBox.style.display = 'block';
+        });
+
+        // Load My Requests
+        async function loadMyRequests() {
+            const res = await callAPI({ action: 'get_my_leave_requests' });
+            const container = document.getElementById('myRequestsList');
+
+            if (res.status === 'success' && res.data.length > 0) {
+                container.innerHTML = res.data.map(req => `
+                    <div class="leave-request-item">
+                        <div class="request-info">
+                            <div class="request-type">${req.leave_type}</div>
+                            <div class="request-dates">${req.start_date} to ${req.end_date}</div>
+                            <div class="request-reason">${req.reason}</div>
+                        </div>
+                        <div class="request-status">
+                            <span class="status-badge status-${req.status.toLowerCase()}">${req.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No leave requests yet</p>';
+            }
+        }
+
+        // Load Admin Requests
+        async function loadAdminRequests() {
+            const res = await callAPI({ action: 'get_leave_requests' });
+            const container = document.getElementById('adminRequestsList');
+
+            if (res.status === 'success' && res.data.length > 0) {
+                container.innerHTML = res.data.map(req => `
+                    <div class="admin-request-item">
+                        <div class="request-header">
+                            <div>
+                                <strong>${req.fName} ${req.lName}</strong>
+                                <span class="request-type">${req.leave_type}</span>
+                            </div>
+                            <div class="request-dates">
+                                <i class="fas fa-calendar"></i> ${req.start_date} to ${req.end_date}
+                            </div>
+                        </div>
+                        <div class="request-reason">${req.reason}</div>
+                        <div class="request-actions">
+                            <button class="btn btn-success" onclick="approveRequest(${req.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectRequest(${req.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No pending requests</p>';
+            }
+        }
+
+        // Approve Request
+        async function approveRequest(requestId) {
+            if (confirm('Approve this leave request?')) {
+                const res = await callAPI({ 
+                    action: 'approve_leave_request',
+                    request_id: requestId
+                });
+                if (res.status === 'success') {
+                    alert('Request approved!');
+                    loadAdminRequests();
+                }
+            }
+        }
+
+        // Reject Request
+        async function rejectRequest(requestId) {
+            if (confirm('Reject this leave request?')) {
+                const res = await callAPI({ 
+                    action: 'reject_leave_request',
+                    request_id: requestId
+                });
+                if (res.status === 'success') {
+                    alert('Request rejected!');
+                    loadAdminRequests();
+                }
+            }
+        }
+    </script>
+
+    
+</body>
+</html>
